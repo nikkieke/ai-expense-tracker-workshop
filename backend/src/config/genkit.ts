@@ -1,9 +1,23 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import dotenv from 'dotenv';
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
-import dotenv from 'dotenv';
 
-// Load environment variables
-dotenv.config();
+// Load environment variables cleanly (CLI export -> local .env -> root .env)
+if (!process.env.GEMINI_API_KEY) {
+  const envCandidates = [
+    path.resolve(process.cwd(), '.env'),
+    path.resolve(process.cwd(), '../.env'),
+  ];
+
+  for (const envPath of envCandidates) {
+    if (fs.existsSync(envPath)) {
+      dotenv.config({ path: envPath });
+      if (process.env.GEMINI_API_KEY) break;
+    }
+  }
+}
 
 export const PRIMARY_MODEL_NAME = process.env.PRIMARY_MODEL || 'gemini-3.8-flash';
 export const FALLBACK_MODEL_NAME = process.env.FALLBACK_MODEL || 'gemini-3.5-flash-lite';
