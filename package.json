@@ -1,0 +1,22 @@
+{
+  "name": "ai-expense-tracker-workshop",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "solutions/*"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "dev:backend": "npm --workspace=backend run dev",
+    "dev:cp1": "npm --workspace=checkpoint-01-native-ai run dev",
+    "dev:cp2": "npm --workspace=checkpoint-02-structured-output run dev",
+    "dev:cp3": "npm --workspace=checkpoint-03-validation run dev",
+    "dev:cp4": "npm --workspace=checkpoint-04-resilience run dev",
+    "dev:cp5": "npm --workspace=checkpoint-05-tool-calling run dev",
+    "dev:cp6": "npm --workspace=checkpoint-06-evaluation run dev",
+    "eval": "npm --workspace=checkpoint-06-evaluation run eval",
+    "eval:compare-prompts": "npm --workspace=checkpoint-06-evaluation run eval:compare-prompts",
+    "eval:compare-models": "npm --workspace=checkpoint-06-evaluation run eval:compare-models"
+  }
+}

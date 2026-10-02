@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+.env
+.env.*
+*.env
+!.env.example
+.genkit/
+*.log
+.DS_Store

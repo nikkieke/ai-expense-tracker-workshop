@@ -8,7 +8,11 @@
     "build": "tsc",
     "start": "tsx src/index.ts",
     "test": "tsx src/test/receipt.validator.test.ts && tsx src/test/resilience.test.ts && tsx src/test/get-expenses.test.ts",
-    "genkit:dev": "genkit start -- tsx --watch src/index.ts"
+    "genkit:dev": "genkit start -- tsx --watch src/index.ts",
+    "eval": "tsx evaluations/eval.ts",
+    "eval:low-prompt": "tsx evaluations/eval.ts --prompt low",
+    "eval:compare-prompts": "tsx evaluations/eval.ts --compare-prompts",
+    "eval:compare-models": "tsx evaluations/eval.ts --compare-models"
   },
   "keywords": [],
   "author": "",
