@@ -1,0 +1,305 @@
+[
+  {
+    "id": "txn_001",
+    "merchantName": "Whole Foods Market",
+    "totalAmount": 128.45,
+    "currency": "USD",
+    "date": "2026-09-24",
+    "category": "Groceries",
+    "summary": "Weekly grocery shopping",
+    "items": [
+      { "name": "Organic Almond Milk", "price": 4.99, "quantity": 2 },
+      { "name": "Avocados (4 pack)", "price": 5.49, "quantity": 1 },
+      { "name": "Atlantic Salmon Fillet", "price": 24.50, "quantity": 1 },
+      { "name": "Organic Spinach", "price": 3.99, "quantity": 2 },
+      { "name": "Greek Yogurt", "price": 6.49, "quantity": 1 },
+      { "name": "Olive Oil Extra Virgin", "price": 18.99, "quantity": 1 },
+      { "name": "Sourdough Bread", "price": 5.99, "quantity": 1 },
+      { "name": "Assorted Fresh Produce", "price": 53.02, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_002",
+    "merchantName": "Chipotle Mexican Grill",
+    "totalAmount": 22.80,
+    "currency": "USD",
+    "date": "2026-09-22",
+    "category": "Food & Dining",
+    "summary": "Dinner burrito bowl and chips",
+    "items": [
+      { "name": "Steak Burrito Bowl", "price": 13.50, "quantity": 1 },
+      { "name": "Chips & Guacamole", "price": 5.50, "quantity": 1 },
+      { "name": "Fountain Drink", "price": 2.20, "quantity": 1 }
+    ],
+    "tax": 1.60
+  },
+  {
+    "id": "txn_003",
+    "merchantName": "Shell Gas Station",
+    "totalAmount": 55.00,
+    "currency": "USD",
+    "date": "2026-09-20",
+    "category": "Transportation",
+    "summary": "Gas fuel refill",
+    "items": [
+      { "name": "Regular Unleaded Fuel (14.5 gal)", "price": 55.00, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_004",
+    "merchantName": "Trader Joe's",
+    "totalAmount": 74.30,
+    "currency": "USD",
+    "date": "2026-09-18",
+    "category": "Groceries",
+    "summary": "Mid-week pantry restock",
+    "items": [
+      { "name": "Mandarin Orange Chicken", "price": 4.99, "quantity": 2 },
+      { "name": "Cauliflower Gnocchi", "price": 3.29, "quantity": 2 },
+      { "name": "Cold Brew Coffee Concentrate", "price": 8.99, "quantity": 1 },
+      { "name": "Dark Chocolate Peanut Butter Cups", "price": 4.49, "quantity": 1 },
+      { "name": "Bananas & Apples", "price": 6.25, "quantity": 1 },
+      { "name": "Pantry Staples & Snacks", "price": 38.00, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_005",
+    "merchantName": "Uber",
+    "totalAmount": 34.20,
+    "currency": "USD",
+    "date": "2026-09-17",
+    "category": "Transportation",
+    "summary": "Rideshare to downtown meeting",
+    "items": [
+      { "name": "UberX Trip", "price": 29.20, "quantity": 1 },
+      { "name": "Driver Tip", "price": 5.00, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_006",
+    "merchantName": "Starbucks Coffee",
+    "totalAmount": 8.75,
+    "currency": "USD",
+    "date": "2026-09-15",
+    "category": "Food & Dining",
+    "summary": "Morning latte and pastry",
+    "items": [
+      { "name": "Iced Oatmilk Latte", "price": 5.75, "quantity": 1 },
+      { "name": "Butter Croissant", "price": 3.00, "quantity": 1 }
+    ],
+    "tax": 0.65
+  },
+  {
+    "id": "txn_007",
+    "merchantName": "Netflix",
+    "totalAmount": 15.99,
+    "currency": "USD",
+    "date": "2026-09-14",
+    "category": "Entertainment",
+    "summary": "Monthly streaming subscription",
+    "items": [
+      { "name": "Standard HD Plan", "price": 15.99, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_008",
+    "merchantName": "Costco Wholesale",
+    "totalAmount": 215.80,
+    "currency": "USD",
+    "date": "2026-09-10",
+    "category": "Groceries",
+    "summary": "Bulk household groceries and paper goods",
+    "items": [
+      { "name": "Kirkland Paper Towels (12 roll)", "price": 22.99, "quantity": 1 },
+      { "name": "Kirkland Organic Eggs (2 doz)", "price": 7.99, "quantity": 2 },
+      { "name": "Chicken Breast Bulk Pack", "price": 34.50, "quantity": 1 },
+      { "name": "Roasted Mixed Nuts (2.5 lb)", "price": 16.99, "quantity": 1 },
+      { "name": "Household & Cleaning Goods", "price": 125.34, "quantity": 1 }
+    ],
+    "tax": 5.20
+  },
+  {
+    "id": "txn_009",
+    "merchantName": "Amazon",
+    "totalAmount": 49.99,
+    "currency": "USD",
+    "date": "2026-09-08",
+    "category": "Shopping",
+    "summary": "USB-C charging dock and cables",
+    "items": [
+      { "name": "Anker 7-in-1 USB-C Hub", "price": 39.99, "quantity": 1 },
+      { "name": "Braided USB-C Cable (2 pack)", "price": 10.00, "quantity": 1 }
+    ],
+    "tax": 4.10
+  },
+  {
+    "id": "txn_010",
+    "merchantName": "Consolidated Edison",
+    "totalAmount": 92.40,
+    "currency": "USD",
+    "date": "2026-09-05",
+    "category": "Utilities",
+    "summary": "Monthly electric & gas utility bill",
+    "items": [
+      { "name": "Electricity & Gas Supply", "price": 92.40, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_011",
+    "merchantName": "Target",
+    "totalAmount": 63.15,
+    "currency": "USD",
+    "date": "2026-09-03",
+    "category": "Shopping",
+    "summary": "Home essentials and organizers",
+    "items": [
+      { "name": "Storage Bins (3 pack)", "price": 24.99, "quantity": 1 },
+      { "name": "Desk Lamp", "price": 19.99, "quantity": 1 },
+      { "name": "Notebooks & Pens", "price": 14.20, "quantity": 1 }
+    ],
+    "tax": 3.97
+  },
+  {
+    "id": "txn_012",
+    "merchantName": "Spotify",
+    "totalAmount": 11.99,
+    "currency": "USD",
+    "date": "2026-09-01",
+    "category": "Entertainment",
+    "summary": "Monthly premium music subscription",
+    "items": [
+      { "name": "Premium Individual Plan", "price": 11.99, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_013",
+    "merchantName": "Whole Foods Market",
+    "totalAmount": 98.70,
+    "currency": "USD",
+    "date": "2026-08-29",
+    "category": "Groceries",
+    "summary": "Weekly groceries",
+    "items": [
+      { "name": "Fresh Produce & Greens", "price": 42.50, "quantity": 1 },
+      { "name": "Grass-fed Ground Beef", "price": 18.20, "quantity": 1 },
+      { "name": "Organic Milk & Cheese", "price": 16.00, "quantity": 1 },
+      { "name": "Snacks & Bread", "price": 22.00, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_014",
+    "merchantName": "AMC Theatres",
+    "totalAmount": 38.50,
+    "currency": "USD",
+    "date": "2026-08-25",
+    "category": "Entertainment",
+    "summary": "Movie tickets and popcorn combo",
+    "items": [
+      { "name": "IMAX Movie Ticket (2)", "price": 26.00, "quantity": 1 },
+      { "name": "Large Popcorn & Soda Combo", "price": 12.50, "quantity": 1 }
+    ],
+    "tax": 2.80
+  },
+  {
+    "id": "txn_015",
+    "merchantName": "Delta Air Lines",
+    "totalAmount": 340.00,
+    "currency": "USD",
+    "date": "2026-08-15",
+    "category": "Travel",
+    "summary": "Flight ticket for conference travel",
+    "items": [
+      { "name": "Roundtrip Flight Ticket", "price": 310.00, "quantity": 1 },
+      { "name": "Checked Bag Fee", "price": 30.00, "quantity": 1 }
+    ],
+    "tax": 24.50
+  },
+  {
+    "id": "txn_016",
+    "merchantName": "Trader Joe's",
+    "totalAmount": 65.20,
+    "currency": "USD",
+    "date": "2026-08-10",
+    "category": "Groceries",
+    "summary": "Groceries and snacks",
+    "items": [
+      { "name": "Pantry & Freezer Staples", "price": 65.20, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_017",
+    "merchantName": "Blue Bottle Coffee",
+    "totalAmount": 6.50,
+    "currency": "USD",
+    "date": "2026-10-02",
+    "category": "Food & Dining",
+    "summary": "Morning pour-over single origin coffee",
+    "items": [
+      { "name": "Bella Donovan Pour Over", "price": 6.00, "quantity": 1 }
+    ],
+    "tax": 0.50
+  },
+  {
+    "id": "txn_018",
+    "merchantName": "Spotify",
+    "totalAmount": 11.99,
+    "currency": "USD",
+    "date": "2026-10-01",
+    "category": "Entertainment",
+    "summary": "Monthly premium music subscription",
+    "items": [
+      { "name": "Premium Individual Plan", "price": 11.99, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_019",
+    "merchantName": "Sweetgreen",
+    "totalAmount": 16.45,
+    "currency": "USD",
+    "date": "2026-10-01",
+    "category": "Food & Dining",
+    "summary": "Harvest Bowl salad with warm wild rice and roasted chicken",
+    "items": [
+      { "name": "Harvest Bowl", "price": 14.95, "quantity": 1 },
+      { "name": "Sparkling Water", "price": 1.50, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_020",
+    "merchantName": "Consolidated Edison",
+    "totalAmount": 88.30,
+    "currency": "USD",
+    "date": "2026-10-02",
+    "category": "Utilities",
+    "summary": "Monthly electric & gas utility bill",
+    "items": [
+      { "name": "Electricity & Gas Supply", "price": 88.30, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_021",
+    "merchantName": "CVS Pharmacy",
+    "totalAmount": 24.80,
+    "currency": "USD",
+    "date": "2026-10-01",
+    "category": "Shopping",
+    "summary": "Daily vitamins and wellness essentials",
+    "items": [
+      { "name": "Multivitamin Gummies", "price": 14.99, "quantity": 1 },
+      { "name": "Immunity Hydration Packets", "price": 7.99, "quantity": 1 }
+    ],
+    "tax": 1.82
+  }
+]

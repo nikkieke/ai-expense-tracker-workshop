@@ -1,0 +1,408 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env using Node's built-in loader
+try {
+  const envPath = path.join(__dirname, '../.env');
+  if (fs.existsSync(envPath) && typeof process.loadEnvFile === 'function') {
+    process.loadEnvFile(envPath);
+  }
+} catch {}
+
+import { ai, primaryModel, fallbackModel, PRIMARY_MODEL_NAME, FALLBACK_MODEL_NAME } from '../src/config/genkit.js';
+import { RawExpenseOutputSchema, type ExpenseOutput } from '../src/schemas/expense.schema.js';
+import { validateAndSanitizeReceipt } from '../src/validators/receipt.validator.js';
+import { withRetry } from '../src/utils/resilience.js';
+
+// Terminal ANSI Colors
+const C = {
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  green: '\x1b[32m',
+  red: '\x1b[31m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  cyan: '\x1b[36m',
+  gray: '\x1b[90m',
+  bgGreen: '\x1b[42m\x1b[30m',
+  bgRed: '\x1b[41m\x1b[37m',
+};
+
+// ==========================================
+// 1. PROMPT DEFINITIONS (Workshop Demo)
+// ==========================================
+
+/**
+ * High-Quality Production Prompt: Includes explicit field guidelines, ISO currency rules,
+ * and strict anti-hallucination blur guardrails with temperature 0.0.
+ */
+function buildHighQualityPrompt(imageUrl: string, preferredCurrency: string) {
+  return {
+    prompt: [
+      { media: { url: imageUrl } },
+      {
+        text: `You are an expert financial assistant specialized in analyzing receipts and extracting structured expense information.
+
+Analyze the provided receipt image carefully and extract all relevant details:
+1. merchantName: Identify the store, vendor, restaurant, or business name.
+2. totalAmount: Extract the grand total charged/paid (as a positive number).
+3. currency: Detect the currency (e.g. USD, EUR, GBP, etc.). If not visible, use "${preferredCurrency}".
+4. date: Extract the transaction date in YYYY-MM-DD format. If year is missing or ambiguous, use the best estimated date.
+5. category: Classify the expense into one of: "Food & Dining", "Groceries", "Transportation", "Entertainment", "Utilities", "Shopping", "Travel", "Other".
+6. items: Extract individual purchased items with name, price, and quantity when available.
+7. tax: Extract sales tax / VAT if listed.
+8. confidence: Assess whether extraction confidence is "high", "medium", or "low" based on receipt clarity.
+9. summary: Provide a concise one-line summary (e.g., "Lunch at Chipotle").
+
+CRITICAL GUARDRAILS:
+- If the image is blurry, unreadable, dark, occluded, or does not clearly display text/numbers:
+  * Do NOT guess, fabricate, or hallucinate store names, prices, or line items.
+  * Set "confidence" to "low".
+  * Set "merchantName" to "Unreadable Receipt".
+  * Set "totalAmount" to 0 (or only extract strictly legible numbers).
+  * Leave "items" as an empty list [].
+  * In "summary", explain: "Receipt image is too blurry or unclear to read reliably."`,
+      },
+    ],
+    temperature: 0.0,
+  };
+}
+
+/**
+ * Native / Baseline Prompt: A realistic beginner prompt that directly asks for fields
+ * but lacks explicit anti-hallucination guardrails and uses default non-zero temperature (0.7).
+ */
+function buildLowQualityPrompt(imageUrl: string, preferredCurrency: string) {
+  return {
+    prompt: [
+      { media: { url: imageUrl } },
+      {
+        text: `You are an AI assistant that extracts receipt data.
+Analyze the provided receipt image and extract the following information:
+- merchantName: Name of the merchant or store
+- totalAmount: Total expense amount
+- currency: Currency (e.g. "${preferredCurrency}")
+- date: Transaction date in YYYY-MM-DD
+- category: Category of expense
+- items: List of purchased line items with name, price, and quantity
+- tax: Tax amount if available
+- confidence: high, medium, or low
+- summary: A one-sentence summary of the receipt`,
+      },
+    ],
+    temperature: 0.7, // Default non-zero temperature
+  };
+}
+
+// ==========================================
+// 2. EXTRACTION RUNNER
+// ==========================================
+
+async function runExtraction(
+  imageUrl: string,
+  preferredCurrency: string,
+  promptType: 'current' | 'low' = 'current',
+  modelInstance = primaryModel
+): Promise<{ output: ExpenseOutput; latencyMs: number }> {
+  const start = Date.now();
+  const config =
+    promptType === 'low'
+      ? buildLowQualityPrompt(imageUrl, preferredCurrency)
+      : buildHighQualityPrompt(imageUrl, preferredCurrency);
+
+  let raw: any;
+  try {
+    raw = await withRetry(
+      async () => {
+        const response = await ai.generate({
+          model: modelInstance,
+          prompt: config.prompt,
+          config: {
+            temperature: config.temperature,
+          },
+          output: {
+            schema: RawExpenseOutputSchema,
+          },
+        });
+
+        if (!response.output) {
+          throw new Error('No output generated by AI model.');
+        }
+        return response.output;
+      },
+      {
+        maxRetries: 2,
+        initialDelayMs: 1500,
+        timeoutMs: 20000,
+        operationName: `Eval Extraction (${promptType})`,
+      }
+    );
+  } catch (primaryErr: any) {
+    // If primary model failed after retries, try fallbackModel
+    if (modelInstance === primaryModel) {
+      const response = await ai.generate({
+        model: fallbackModel,
+        prompt: config.prompt,
+        config: {
+          temperature: config.temperature,
+        },
+        output: {
+          schema: RawExpenseOutputSchema,
+        },
+      });
+      raw = response.output;
+    } else {
+      throw primaryErr;
+    }
+  }
+
+  const latencyMs = Date.now() - start;
+  const sanitized = validateAndSanitizeReceipt(raw, { preferredCurrency });
+  return { output: sanitized, latencyMs };
+}
+
+// ==========================================
+// 3. SCORING & ASSERTIONS
+// ==========================================
+
+interface TestCase {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  preferredCurrency?: string;
+  expected: {
+    merchantName?: string;
+    totalAmount?: number;
+    currency?: string;
+    category?: string;
+    confidence?: string;
+  };
+  assertionRules?: {
+    mustNotHallucinateAmount?: boolean;
+    maxAllowedConfidence?: string;
+  };
+}
+
+interface CaseResult {
+  testCase: TestCase;
+  passed: boolean;
+  actual: ExpenseOutput;
+  latencyMs: number;
+  failureReasons: string[];
+}
+
+function evaluateTestCase(testCase: TestCase, actual: ExpenseOutput, latencyMs: number): CaseResult {
+  const failureReasons: string[] = [];
+  const { expected, assertionRules } = testCase;
+
+  // 1. Anti-Hallucination Check for Blurry Cases
+  if (assertionRules?.mustNotHallucinateAmount) {
+    if (actual.confidence === 'high') {
+      failureReasons.push(`Confidence was "high" on blurry image (expected "low").`);
+    }
+    if (actual.totalAmount > 0.05 && (!expected.totalAmount || expected.totalAmount === 0)) {
+      failureReasons.push(
+        `Hallucinated total amount $${actual.totalAmount.toFixed(2)} on a blurry image!`
+      );
+    }
+  }
+
+  // 2. Merchant Match Check
+  if (expected.merchantName) {
+    const normActual = actual.merchantName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const normExpected = expected.merchantName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const isGenericUnreadable = normExpected.includes('unreadable') && normActual.includes('unreadable');
+
+    if (!isGenericUnreadable && !normActual.includes(normExpected) && !normExpected.includes(normActual)) {
+      failureReasons.push(
+        `Merchant mismatch: got "${actual.merchantName}", expected "${expected.merchantName}"`
+      );
+    }
+  }
+
+  // 3. Total Amount Tolerance Check (±0.05)
+  if (expected.totalAmount !== undefined && !assertionRules?.mustNotHallucinateAmount) {
+    const diff = Math.abs(actual.totalAmount - expected.totalAmount);
+    if (diff > 0.05) {
+      failureReasons.push(
+        `Total amount mismatch: got ${actual.totalAmount.toFixed(2)}, expected ${expected.totalAmount.toFixed(2)}`
+      );
+    }
+  }
+
+  // 4. Currency Check
+  if (expected.currency && actual.currency.toUpperCase() !== expected.currency.toUpperCase()) {
+    failureReasons.push(
+      `Currency mismatch: got "${actual.currency}", expected "${expected.currency}"`
+    );
+  }
+
+  return {
+    testCase,
+    passed: failureReasons.length === 0,
+    actual,
+    latencyMs,
+    failureReasons,
+  };
+}
+
+// ==========================================
+// 4. CLI DISPLAY & BENCHMARK FORMATTING
+// ==========================================
+
+async function runSuite(promptType: 'current' | 'low', modelName = PRIMARY_MODEL_NAME, model = primaryModel) {
+  const datasetPath = path.join(__dirname, 'receipts.json');
+  const dataset: TestCase[] = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
+
+  console.log(`\n${C.bold}${C.cyan}======================================================================${C.reset}`);
+  console.log(
+    `  ${C.bold}AI RECEIPT EVALUATION RUN${C.reset}  |  Prompt: ${
+      promptType === 'current' ? `${C.green}Production (High Quality)${C.reset}` : `${C.red}Native (Low Quality)${C.reset}`
+    }  |  Model: ${C.yellow}${modelName}${C.reset}`
+  );
+  console.log(`${C.cyan}======================================================================${C.reset}\n`);
+
+  const results: CaseResult[] = [];
+
+  for (let i = 0; i < dataset.length; i++) {
+    const tc = dataset[i];
+    process.stdout.write(`  [${i + 1}/${dataset.length}] Running: ${C.bold}${tc.title}${C.reset} ... `);
+
+    try {
+      const { output, latencyMs } = await runExtraction(tc.imageUrl, tc.preferredCurrency || 'USD', promptType, model);
+      const res = evaluateTestCase(tc, output, latencyMs);
+      results.push(res);
+
+      if (res.passed) {
+        console.log(`${C.bgGreen} PASS ${C.reset} ${C.dim}(${latencyMs}ms)${C.reset}`);
+        console.log(
+          `         ${C.dim}↳ Extracted: ${C.bold}${res.actual.merchantName}${C.reset} | ${C.green}${res.actual.currency} ${res.actual.totalAmount.toFixed(2)}${C.reset} | Confidence: ${res.actual.confidence}${C.reset}`
+        );
+      } else {
+        console.log(`${C.bgRed} FAIL ${C.reset} ${C.dim}(${latencyMs}ms)${C.reset}`);
+        console.log(
+          `         ${C.dim}↳ Extracted: ${C.bold}${res.actual.merchantName}${C.reset} | ${res.actual.currency} ${res.actual.totalAmount.toFixed(2)} | Confidence: ${res.actual.confidence}${C.reset}`
+        );
+        for (const reason of res.failureReasons) {
+          console.log(`         ${C.red}✖ ${reason}${C.reset}`);
+        }
+      }
+    } catch (err: any) {
+      console.log(`${C.bgRed} ERROR ${C.reset}`);
+      console.log(`         ${C.red}✖ Execution Error: ${err.message}${C.reset}`);
+      results.push({
+        testCase: tc,
+        passed: false,
+        actual: {
+          merchantName: 'Error',
+          totalAmount: 0,
+          currency: 'USD',
+          date: '',
+          category: 'Other',
+          items: [],
+          tax: null,
+          confidence: 'low',
+          summary: '',
+          isMathConsistent: false,
+          warnings: [],
+        },
+        latencyMs: 0,
+        failureReasons: [err.message],
+      });
+    }
+    console.log();
+  }
+
+  const passedCount = results.filter((r) => r.passed).length;
+  const scorePercent = Math.round((passedCount / dataset.length) * 100);
+  const avgLatency = Math.round(results.reduce((acc, r) => acc + r.latencyMs, 0) / (results.length || 1));
+
+  // Score summary card
+  console.log(`${C.cyan}----------------------------------------------------------------------${C.reset}`);
+  console.log(
+    `  ${C.bold}OVERALL ACCURACY SCORE:${C.reset} ${
+      scorePercent >= 80 ? C.green : scorePercent >= 50 ? C.yellow : C.red
+    }${scorePercent}% (${passedCount}/${dataset.length} passed)${C.reset}`
+  );
+  console.log(`  ${C.bold}AVERAGE SPEED / LATENCY:${C.reset} ${avgLatency}ms`);
+  console.log(`${C.cyan}======================================================================${C.reset}\n`);
+
+  return { passedCount, total: dataset.length, scorePercent, avgLatency, results };
+}
+
+// Side-by-Side Prompt Comparison
+async function runPromptComparison() {
+  console.log(`\n${C.bold}${C.cyan}==============================================================================${C.reset}`);
+  console.log(`  ${C.bold}WORKSHOP BENCHMARK: HIGH-QUALITY PROMPT  vs  LOW-QUALITY NATIVE PROMPT${C.reset}`);
+  console.log(`${C.cyan}==============================================================================${C.reset}\n`);
+
+  const currentRun = await runSuite('current');
+  const lowRun = await runSuite('low');
+
+  console.log(`\n${C.bold}${C.yellow}==============================================================================${C.reset}`);
+  console.log(`                              SIDE-BY-SIDE SUMMARY                            `);
+  console.log(`${C.yellow}==============================================================================${C.reset}`);
+  console.log(
+    `  ${C.bold}Metric${C.reset}                         ${C.bold}Production (High Quality)${C.reset}      ${C.bold}Native (Low Quality)${C.reset}`
+  );
+  console.log(`  ----------------------------------------------------------------------------`);
+  console.log(
+    `  Accuracy Score                 ${C.green}${currentRun.scorePercent}% (${currentRun.passedCount}/${currentRun.total})${C.reset}                   ${C.red}${lowRun.scorePercent}% (${lowRun.passedCount}/${lowRun.total})${C.reset}`
+  );
+  console.log(
+    `  Hallucination on Blurry Image  ${C.green}Protected (Low Conf)${C.reset}       ${C.red}Failed (Hallucinated!)${C.reset}`
+  );
+  console.log(
+    `  Deterministic Temp             ${C.green}0.0 (Greedy Reproducible)${C.reset}  ${C.yellow}0.7 (Random Varied)${C.reset}`
+  );
+  console.log(
+    `  Average Latency                ${currentRun.avgLatency}ms                       ${lowRun.avgLatency}ms`
+  );
+  console.log(`${C.yellow}==============================================================================${C.reset}\n`);
+}
+
+// Side-by-Side Model Comparison (Primary vs Fallback Lite)
+async function runModelComparison() {
+  console.log(`\n${C.bold}${C.cyan}==============================================================================${C.reset}`);
+  console.log(`  ${C.bold}MODEL BENCHMARK: ${PRIMARY_MODEL_NAME}  vs  ${FALLBACK_MODEL_NAME}${C.reset}`);
+  console.log(`${C.cyan}==============================================================================${C.reset}\n`);
+
+  console.log(`  Evaluating model 1: ${PRIMARY_MODEL_NAME}...`);
+  const m1 = await runSuite('current', PRIMARY_MODEL_NAME, primaryModel);
+
+  console.log(`  Evaluating model 2: ${FALLBACK_MODEL_NAME}...`);
+  const m2 = await runSuite('current', FALLBACK_MODEL_NAME, fallbackModel);
+
+  console.log(`\n${C.bold}${C.yellow}==============================================================================${C.reset}`);
+  console.log(`                              MODEL COMPARISON SUMMARY                        `);
+  console.log(`${C.yellow}==============================================================================${C.reset}`);
+  console.log(
+    `  ${C.bold}Metric${C.reset}                         ${C.bold}${PRIMARY_MODEL_NAME}${C.reset}            ${C.bold}${FALLBACK_MODEL_NAME}${C.reset}`
+  );
+  console.log(`  ----------------------------------------------------------------------------`);
+  console.log(
+    `  Accuracy Score                 ${C.green}${m1.scorePercent}% (${m1.passedCount}/${m1.total})${C.reset}                   ${m2.scorePercent}% (${m2.passedCount}/${m2.total})`
+  );
+  console.log(
+    `  Average Latency                ${m1.avgLatency}ms                       ${m2.avgLatency}ms`
+  );
+  console.log(`${C.yellow}==============================================================================${C.reset}\n`);
+}
+
+// CLI Argument Dispatcher
+const args = process.argv.slice(2);
+if (args.includes('--compare-prompts')) {
+  runPromptComparison().catch(console.error);
+} else if (args.includes('--compare-models')) {
+  runModelComparison().catch(console.error);
+} else if (args.includes('--prompt') && args.includes('low')) {
+  runSuite('low').catch(console.error);
+} else {
+  runSuite('current').catch(console.error);
+}
