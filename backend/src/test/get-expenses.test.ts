@@ -64,7 +64,7 @@ const allTransactions = loadTransactions();
   assert(bigExpenses.totalSpent === 684.25, `Sum of large expenses is $684.25 (got ${bigExpenses.totalSpent})`);
 }
 
-// 6. Multi-Category Aggregation
+// 6. Multi-Category Aggregation (August 2026)
 {
   const augustExpenses = filterExpenses(allTransactions, {
     startDate: '2026-08-01',
@@ -74,6 +74,18 @@ const allTransactions = loadTransactions();
   assert(augustExpenses.totalSpent === 542.40, `August total is $542.40 (got ${augustExpenses.totalSpent})`);
   assert(augustExpenses.categoryBreakdown['Travel'] === 340.00, 'August travel breakdown is $340.00');
   assert(augustExpenses.categoryBreakdown['Entertainment'] === 38.50, 'August entertainment breakdown is $38.50');
+}
+
+// 7. Multi-Category Aggregation (October 2026)
+{
+  const octoberExpenses = filterExpenses(allTransactions, {
+    startDate: '2026-10-01',
+    endDate: '2026-10-31',
+  });
+  assert(octoberExpenses.count === 5, 'Found 5 transactions in October 2026');
+  assert(octoberExpenses.totalSpent === 148.04, `October total is $148.04 (got ${octoberExpenses.totalSpent})`);
+  assert(octoberExpenses.categoryBreakdown['Utilities'] === 88.30, 'October utilities breakdown is $88.30');
+  assert(octoberExpenses.categoryBreakdown['Food & Dining'] === 22.95, 'October food & dining breakdown is $22.95');
 }
 
 console.log(`\n========================================`);

@@ -217,14 +217,20 @@ class ReceiptDetailDialog extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _buildInfoCard(
-                          icon: receipt.isMathConsistent
-                              ? Icons.check_circle_outline_rounded
-                              : Icons.warning_amber_rounded,
-                          iconColor: receipt.isMathConsistent
-                              ? const Color(0xFF10B981)
-                              : const Color(0xFFD97706),
+                          icon: receipt.isMathConsistent == null
+                              ? Icons.remove_circle_outline_rounded
+                              : (receipt.isMathConsistent == true
+                                  ? Icons.check_circle_outline_rounded
+                                  : Icons.warning_amber_rounded),
+                          iconColor: receipt.isMathConsistent == null
+                              ? const Color(0xFF9CA3AF)
+                              : (receipt.isMathConsistent == true
+                                  ? const Color(0xFF10B981)
+                                  : const Color(0xFFD97706)),
                           label: 'Math Reconciliation',
-                          value: receipt.isMathConsistent ? 'Reconciled' : 'Discrepancy Noted',
+                          value: receipt.isMathConsistent == null
+                              ? 'Not Evaluated'
+                              : (receipt.isMathConsistent == true ? 'Reconciled' : 'Discrepancy Noted'),
                         ),
                       ),
                       if (receipt.tax != null) ...[

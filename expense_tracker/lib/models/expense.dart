@@ -60,7 +60,7 @@ class ExpenseOutput {
   final double? tax;
   final String confidence; // 'high' | 'medium' | 'low'
   final String summary;
-  final bool isMathConsistent;
+  final bool? isMathConsistent;
   final List<ValidationWarning> warnings;
 
   const ExpenseOutput({
@@ -73,7 +73,7 @@ class ExpenseOutput {
     this.tax,
     required this.confidence,
     required this.summary,
-    this.isMathConsistent = true,
+    this.isMathConsistent,
     this.warnings = const [],
   });
 
@@ -91,7 +91,7 @@ class ExpenseOutput {
       tax: json['tax'] != null ? (json['tax'] as num).toDouble() : null,
       confidence: json['confidence'] as String? ?? 'medium',
       summary: json['summary'] as String? ?? '',
-      isMathConsistent: json['isMathConsistent'] as bool? ?? true,
+      isMathConsistent: json['isMathConsistent'] as bool?,
       warnings: rawWarnings.map((e) => ValidationWarning.fromJson(e as Map<String, dynamic>)).toList(),
     );
   }

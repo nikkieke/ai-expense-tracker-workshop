@@ -33,11 +33,13 @@ export function loadTransactions(forceReload: boolean = false): ExpenseTransacti
   }
 
   const possiblePaths = [
-    path.resolve(process.cwd(), '../data/transactions.json'),
     path.resolve(process.cwd(), 'data/transactions.json'),
-    path.resolve(__dirname, '../../../data/transactions.json'),
-    path.resolve(__dirname, '../../data/transactions.json'),
+    path.resolve(process.cwd(), 'backend/data/transactions.json'),
+    path.resolve(process.cwd(), '../backend/data/transactions.json'),
+    path.resolve(process.cwd(), '../../backend/data/transactions.json'),
     path.resolve(__dirname, '../data/transactions.json'),
+    path.resolve(__dirname, '../../data/transactions.json'),
+    path.resolve(__dirname, '../../../backend/data/transactions.json'),
   ];
 
   for (const filePath of possiblePaths) {

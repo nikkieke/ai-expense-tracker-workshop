@@ -2,8 +2,20 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 class ApiConfig {
-  /// Resolves the base URL depending on the platform (Web, Android emulator, iOS simulator, or desktop).
+  /// Custom backend URL override provided via:
+  /// `flutter run --dart-define=BACKEND_URL=http://<YOUR_IP>:3000`
+  static const String _customBackendUrl = String.fromEnvironment('BACKEND_URL');
+
+  /// Resolves the base URL depending on environment override or platform:
+  /// - Explicit BACKEND_URL dart-define (for physical devices over Wi-Fi / custom hosts)
+  /// - Web / Desktop / iOS Simulator: http://localhost:3000
+  /// - Android Emulator: http://10.0.2.2:3000
   static String get baseUrl {
+    if (_customBackendUrl.isNotEmpty) {
+      return _customBackendUrl.endsWith('/')
+          ? _customBackendUrl.substring(0, _customBackendUrl.length - 1)
+          : _customBackendUrl;
+    }
     if (kIsWeb) {
       return 'http://localhost:3000';
     }

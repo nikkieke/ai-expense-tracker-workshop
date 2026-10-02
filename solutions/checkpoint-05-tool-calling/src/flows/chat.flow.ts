@@ -26,7 +26,6 @@ function buildSystemPrompt(): string {
   return `You are a helpful, accurate, and friendly personal financial assistant and expense advisor.
 
 Current Reference Date: ${todayIso} (Year: ${currentYear}, Month: ${currentMonth})
-User Transaction History: Records available from August 2026 to October 2026.
 
 CORE INSTRUCTIONS:
 1. ALWAYS use the "getExpenses" tool whenever the user asks about their spending, purchases, expenses, budget, or transactions.

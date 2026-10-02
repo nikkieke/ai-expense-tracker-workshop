@@ -234,5 +234,72 @@
       { "name": "Pantry & Freezer Staples", "price": 65.20, "quantity": 1 }
     ],
     "tax": 0.00
+  },
+  {
+    "id": "txn_017",
+    "merchantName": "Blue Bottle Coffee",
+    "totalAmount": 6.50,
+    "currency": "USD",
+    "date": "2026-10-02",
+    "category": "Food & Dining",
+    "summary": "Morning pour-over single origin coffee",
+    "items": [
+      { "name": "Bella Donovan Pour Over", "price": 6.00, "quantity": 1 }
+    ],
+    "tax": 0.50
+  },
+  {
+    "id": "txn_018",
+    "merchantName": "Spotify",
+    "totalAmount": 11.99,
+    "currency": "USD",
+    "date": "2026-10-01",
+    "category": "Entertainment",
+    "summary": "Monthly premium music subscription",
+    "items": [
+      { "name": "Premium Individual Plan", "price": 11.99, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_019",
+    "merchantName": "Sweetgreen",
+    "totalAmount": 16.45,
+    "currency": "USD",
+    "date": "2026-10-01",
+    "category": "Food & Dining",
+    "summary": "Harvest Bowl salad with warm wild rice and roasted chicken",
+    "items": [
+      { "name": "Harvest Bowl", "price": 14.95, "quantity": 1 },
+      { "name": "Sparkling Water", "price": 1.50, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_020",
+    "merchantName": "Consolidated Edison",
+    "totalAmount": 88.30,
+    "currency": "USD",
+    "date": "2026-10-02",
+    "category": "Utilities",
+    "summary": "Monthly electric & gas utility bill",
+    "items": [
+      { "name": "Electricity & Gas Supply", "price": 88.30, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_021",
+    "merchantName": "CVS Pharmacy",
+    "totalAmount": 24.80,
+    "currency": "USD",
+    "date": "2026-10-01",
+    "category": "Shopping",
+    "summary": "Daily vitamins and wellness essentials",
+    "items": [
+      { "name": "Multivitamin Gummies", "price": 14.99, "quantity": 1 },
+      { "name": "Immunity Hydration Packets", "price": 7.99, "quantity": 1 }
+    ],
+    "tax": 1.82
   }
 ]
