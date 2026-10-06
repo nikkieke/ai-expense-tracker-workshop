@@ -19,7 +19,7 @@ if (!process.env.GEMINI_API_KEY) {
   }
 }
 
-export const PRIMARY_MODEL_NAME = process.env.PRIMARY_MODEL || 'gemini-3.8-flash';
+export const PRIMARY_MODEL_NAME = process.env.PRIMARY_MODEL || 'gemini-3.6-flash';
 export const FALLBACK_MODEL_NAME = process.env.FALLBACK_MODEL || 'gemini-3.5-flash-lite';
 
 export const primaryModel = googleAI.model(PRIMARY_MODEL_NAME);

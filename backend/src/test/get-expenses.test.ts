@@ -26,9 +26,9 @@ const allTransactions = loadTransactions();
 // 2. Category Filter Test (Groceries)
 {
   const result = filterExpenses(allTransactions, { category: 'Groceries' });
-  assert(result.count === 5, 'Found 5 total grocery transactions');
-  assert(result.totalSpent === 582.45, `Total grocery spent is 582.45 (got ${result.totalSpent})`);
-  assert(result.categoryBreakdown['Groceries'] === 582.45, 'Category breakdown contains Groceries sum');
+  assert(result.count === 7, 'Found 7 total grocery transactions');
+  assert(result.totalSpent === 765.60, `Total grocery spent is 765.60 (got ${result.totalSpent})`);
+  assert(result.categoryBreakdown['Groceries'] === 765.60, 'Category breakdown contains Groceries sum');
 }
 
 // 3. Date Range + Category Query ("Groceries this month - Sept 2026")
@@ -51,17 +51,17 @@ const allTransactions = loadTransactions();
 // 4. Merchant Substring Filter (Case-insensitive)
 {
   const uberResult = filterExpenses(allTransactions, { merchantName: 'uber' });
-  assert(uberResult.count === 1 && uberResult.totalSpent === 34.20, 'Found Uber rideshare transaction ($34.20)');
+  assert(uberResult.count === 2 && uberResult.totalSpent === 62.70, 'Found 2 Uber rideshare transactions ($62.70)');
 
   const wfResult = filterExpenses(allTransactions, { merchantName: 'Whole Foods' });
-  assert(wfResult.count === 2, 'Found 2 Whole Foods transactions across months');
+  assert(wfResult.count === 3, 'Found 3 Whole Foods transactions across months');
 }
 
 // 5. Amount Range Filter
 {
   const bigExpenses = filterExpenses(allTransactions, { minAmount: 100.0 });
-  assert(bigExpenses.count === 3, 'Found 3 expenses >= $100 (Delta $340, Costco $215.80, Whole Foods $128.45)');
-  assert(bigExpenses.totalSpent === 684.25, `Sum of large expenses is $684.25 (got ${bigExpenses.totalSpent})`);
+  assert(bigExpenses.count === 4, 'Found 4 expenses >= $100 (Delta $340, Costco $215.80, Whole Foods $128.45 & $114.75)');
+  assert(bigExpenses.totalSpent === 799.00, `Sum of large expenses is $799.00 (got ${bigExpenses.totalSpent})`);
 }
 
 // 6. Multi-Category Aggregation (August 2026)
@@ -82,10 +82,11 @@ const allTransactions = loadTransactions();
     startDate: '2026-10-01',
     endDate: '2026-10-31',
   });
-  assert(octoberExpenses.count === 5, 'Found 5 transactions in October 2026');
-  assert(octoberExpenses.totalSpent === 148.04, `October total is $148.04 (got ${octoberExpenses.totalSpent})`);
+  assert(octoberExpenses.count === 14, 'Found 14 transactions in October 2026');
+  assert(octoberExpenses.totalSpent === 581.68, `October total is $581.68 (got ${octoberExpenses.totalSpent})`);
   assert(octoberExpenses.categoryBreakdown['Utilities'] === 88.30, 'October utilities breakdown is $88.30');
-  assert(octoberExpenses.categoryBreakdown['Food & Dining'] === 22.95, 'October food & dining breakdown is $22.95');
+  assert(octoberExpenses.categoryBreakdown['Food & Dining'] === 59.40, 'October food & dining breakdown is $59.40');
+  assert(octoberExpenses.categoryBreakdown['Groceries'] === 183.15, 'October groceries breakdown is $183.15');
 }
 
 console.log(`\n========================================`);

@@ -301,5 +301,138 @@
       { "name": "Immunity Hydration Packets", "price": 7.99, "quantity": 1 }
     ],
     "tax": 1.82
+  },
+  {
+    "id": "txn_022",
+    "merchantName": "Whole Foods Market",
+    "totalAmount": 114.75,
+    "currency": "USD",
+    "date": "2026-10-03",
+    "category": "Groceries",
+    "summary": "Weekend organic grocery restock",
+    "items": [
+      { "name": "Organic Honeycrisp Apples", "price": 6.99, "quantity": 1 },
+      { "name": "Wild Alaskan Salmon", "price": 26.50, "quantity": 1 },
+      { "name": "Organic Oat Milk", "price": 4.49, "quantity": 2 },
+      { "name": "Organic Baby Spinach", "price": 3.99, "quantity": 2 },
+      { "name": "Grass-Fed Ribeye Steak", "price": 28.50, "quantity": 1 },
+      { "name": "Artisan Sourdough", "price": 6.49, "quantity": 1 },
+      { "name": "Fresh Produce & Berries", "price": 31.31, "quantity": 1 }
+    ],
+    "tax": 3.00
+  },
+  {
+    "id": "txn_023",
+    "merchantName": "Uber",
+    "totalAmount": 28.50,
+    "currency": "USD",
+    "date": "2026-10-03",
+    "category": "Transportation",
+    "summary": "Rideshare to client meeting downtown",
+    "items": [
+      { "name": "UberX Ride", "price": 23.50, "quantity": 1 },
+      { "name": "Driver Tip", "price": 5.00, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_024",
+    "merchantName": "Apple Store",
+    "totalAmount": 42.45,
+    "currency": "USD",
+    "date": "2026-10-04",
+    "category": "Shopping",
+    "summary": "MagSafe wireless charger",
+    "items": [
+      { "name": "Apple MagSafe Charger", "price": 39.00, "quantity": 1 }
+    ],
+    "tax": 3.45
+  },
+  {
+    "id": "txn_025",
+    "merchantName": "Shake Shack",
+    "totalAmount": 24.60,
+    "currency": "USD",
+    "date": "2026-10-04",
+    "category": "Food & Dining",
+    "summary": "Lunch double ShackBurger and shake",
+    "items": [
+      { "name": "Double ShackBurger", "price": 10.89, "quantity": 1 },
+      { "name": "Cheese Fries", "price": 5.49, "quantity": 1 },
+      { "name": "Hand-spun Vanilla Shake", "price": 6.19, "quantity": 1 }
+    ],
+    "tax": 2.03
+  },
+  {
+    "id": "txn_026",
+    "merchantName": "Trader Joe's",
+    "totalAmount": 68.40,
+    "currency": "USD",
+    "date": "2026-10-05",
+    "category": "Groceries",
+    "summary": "Mid-week groceries and snacks",
+    "items": [
+      { "name": "Mandarin Orange Chicken", "price": 4.99, "quantity": 2 },
+      { "name": "Greek Whole Milk Yogurt", "price": 5.99, "quantity": 1 },
+      { "name": "Cold Brew Concentrate", "price": 8.99, "quantity": 1 },
+      { "name": "Organic Free Range Eggs", "price": 4.79, "quantity": 1 },
+      { "name": "Produce, Cheese & Snacks", "price": 38.65, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_027",
+    "merchantName": "Shell Gas Station",
+    "totalAmount": 52.30,
+    "currency": "USD",
+    "date": "2026-10-05",
+    "category": "Transportation",
+    "summary": "Gas tank fuel refill",
+    "items": [
+      { "name": "Premium Unleaded Gas (13.2 gal)", "price": 52.30, "quantity": 1 }
+    ],
+    "tax": 0.00
+  },
+  {
+    "id": "txn_028",
+    "merchantName": "AMC Theatres",
+    "totalAmount": 50.00,
+    "currency": "USD",
+    "date": "2026-10-05",
+    "category": "Entertainment",
+    "summary": "Dolby Cinema tickets & popcorn",
+    "items": [
+      { "name": "Dolby Cinema Movie Ticket (2)", "price": 34.00, "quantity": 1 },
+      { "name": "Regular Popcorn Combo", "price": 12.50, "quantity": 1 }
+    ],
+    "tax": 3.50
+  },
+  {
+    "id": "txn_029",
+    "merchantName": "Starbucks Coffee",
+    "totalAmount": 11.85,
+    "currency": "USD",
+    "date": "2026-10-06",
+    "category": "Food & Dining",
+    "summary": "Morning flat white & breakfast sandwich",
+    "items": [
+      { "name": "Grande Flat White", "price": 5.65, "quantity": 1 },
+      { "name": "Bacon, Gouda & Egg Sandwich", "price": 5.25, "quantity": 1 }
+    ],
+    "tax": 0.95
+  },
+  {
+    "id": "txn_030",
+    "merchantName": "Amazon",
+    "totalAmount": 40.79,
+    "currency": "USD",
+    "date": "2026-10-06",
+    "category": "Shopping",
+    "summary": "Office desk pad and stationery",
+    "items": [
+      { "name": "Leather Desk Mat", "price": 24.99, "quantity": 1 },
+      { "name": "Gel Pen Set (12-pack)", "price": 12.50, "quantity": 1 }
+    ],
+    "tax": 3.30
   }
 ]

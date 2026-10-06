@@ -13,6 +13,7 @@
     "dev:cp2": "npm --workspace=checkpoint-02-structured-output run dev",
     "dev:cp3": "npm --workspace=checkpoint-03-validation run dev",
     "dev:cp4": "npm --workspace=checkpoint-04-resilience run dev",
+    "dev:cp4:fallback": "npm --workspace=checkpoint-04-resilience run dev:fallback",
     "dev:cp5": "npm --workspace=checkpoint-05-tool-calling run dev",
     "dev:cp6": "npm --workspace=checkpoint-06-evaluation run dev",
     "eval": "npm --workspace=checkpoint-06-evaluation run eval",
