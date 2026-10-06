@@ -56,5 +56,5 @@ app.post('/api/expenses/scan-receipt', async (req: Request, res: Response): Prom
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 [Checkpoint 01: Native AI] Server running at http://localhost:${PORT}`);
+  console.log(`🚀 [Checkpoint 01: Simple AI] Server running at http://localhost:${PORT}`);
 });

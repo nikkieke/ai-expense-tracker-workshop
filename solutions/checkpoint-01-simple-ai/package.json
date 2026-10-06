@@ -1,5 +1,5 @@
 {
-  "name": "checkpoint-01-native-ai",
+  "name": "checkpoint-01-simple-ai",
   "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",
@@ -11,7 +11,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "Checkpoint 01: Native AI Prompting without Schemas or Validation",
+  "description": "Checkpoint 01: Simple AI Prompting without Schemas or Validation",
   "dependencies": {
     "@genkit-ai/google-genai": "^1.42.0",
     "cors": "^2.8.6",

@@ -9,7 +9,7 @@
   "scripts": {
     "test": "npm run test --workspaces --if-present",
     "dev:backend": "npm --workspace=backend run dev",
-    "dev:cp1": "npm --workspace=checkpoint-01-native-ai run dev",
+    "dev:cp1": "npm --workspace=checkpoint-01-simple-ai run dev",
     "dev:cp2": "npm --workspace=checkpoint-02-structured-output run dev",
     "dev:cp3": "npm --workspace=checkpoint-03-validation run dev",
     "dev:cp4": "npm --workspace=checkpoint-04-resilience run dev",

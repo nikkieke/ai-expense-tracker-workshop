@@ -1,9 +1,9 @@
-# Checkpoint 01: Native AI
+# Checkpoint 01: Simple AI
 
 Welcome to **Checkpoint 01** of the AI Expense Tracker Workshop!
 
 ## 🎯 Goal
-Understand the common pitfalls of native LLM prompt engineering without structured output schemas or validation.
+Understand the common pitfalls of simple LLM prompt engineering without structured output schemas or validation.
 
 ---
 
@@ -44,7 +44,7 @@ Set your `GEMINI_API_KEY` once in your terminal session. Setting it via the CLI 
 
 1. **Navigate to this folder:**
    ```bash
-   cd solutions/checkpoint-01-native-ai
+   cd solutions/checkpoint-01-simple-ai
    ```
 
 2. **Install dependencies:**

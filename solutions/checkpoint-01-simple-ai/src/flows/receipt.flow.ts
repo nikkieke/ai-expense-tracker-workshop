@@ -1,11 +1,11 @@
 import { ai, primaryModel } from '../config/genkit.js';
 
-export interface NativeReceiptInput {
+export interface SimpleReceiptInput {
   imageUrl: string;
   preferredCurrency?: string;
 }
 
-export interface NativeReceiptOutput {
+export interface SimpleReceiptOutput {
   merchantName: string;
   totalAmount: number;
   currency: string;
@@ -18,11 +18,11 @@ export interface NativeReceiptOutput {
 }
 
 /**
- * Checkpoint 01: Native AI Extraction Flow
- * - Uses a native, freeform prompt
+ * Checkpoint 01: Simple AI Extraction Flow
+ * - Uses a simple, freeform prompt
  * - Relies on regex / JSON.parse to extract data
  */
-export async function extractReceiptFlow(input: NativeReceiptInput): Promise<NativeReceiptOutput> {
+export async function extractReceiptFlow(input: SimpleReceiptInput): Promise<SimpleReceiptOutput> {
   const { imageUrl, preferredCurrency = 'USD' } = input;
 
   const response = await ai.generate({
@@ -71,7 +71,7 @@ Analyze the provided receipt image and extract the following information as JSON
       summary: parsed.summary || rawText.slice(0, 100),
     };
   } catch {
-    // Native fallback if the LLM output wasn't valid JSON
+    // Simple fallback if the LLM output wasn't valid JSON
     return {
       merchantName: 'Unknown Merchant',
       totalAmount: 0,
