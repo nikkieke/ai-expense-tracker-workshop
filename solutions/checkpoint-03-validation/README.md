@@ -36,27 +36,16 @@ If you haven't already exported your key in this terminal:
 
 ---
 
-### 2. Install & Run
+### 2. Run this Checkpoint
 
-1. **Navigate to this folder:**
-   ```bash
-   cd solutions/checkpoint-03-validation
-   ```
+From the repository root:
+```bash
+# Run unit tests:
+npm test
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Run the Unit Tests:**
-   ```bash
-   npm test
-   ```
-
-4. **Start the Development Server:**
-   ```bash
-   npm run dev
-   ```
+# Start the development server:
+npm run dev:cp3
+```
 
 ---
 

@@ -39,38 +39,18 @@ If you haven't already exported your key in this terminal:
 
 ---
 
-### 2. Install & Run
+### 2. Run this Checkpoint
 
-1. **Navigate to this folder:**
-   ```bash
-   cd solutions/checkpoint-06-evaluation
-   ```
+From the repository root:
+```bash
+# Run unit tests:
+npm test
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+# Run evaluations:
+npm run eval
+npm run eval:compare-prompts
+npm run eval:compare-models
 
-3. **Run the Full Test Suite:**
-   ```bash
-   npm test
-   ```
-
-4. **Run Evaluations & Benchmarks:**
-   - Run default evaluation:
-     ```bash
-     npm run eval
-     ```
-   - Compare High-Quality vs Native Prompt:
-     ```bash
-     npm run eval:compare-prompts
-     ```
-   - Compare Primary Model vs Fallback Model:
-     ```bash
-     npm run eval:compare-models
-     ```
-
-5. **Start the Development Server:**
-   ```bash
-   npm run dev
-   ```
+# Start the development server:
+npm run dev:cp6
+```

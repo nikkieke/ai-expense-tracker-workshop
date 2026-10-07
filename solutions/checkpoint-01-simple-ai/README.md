@@ -40,22 +40,12 @@ Set your `GEMINI_API_KEY` once in your terminal session. Setting it via the CLI 
 
 ---
 
-### 2. Install & Run
+### 2. Run this Checkpoint
 
-1. **Navigate to this folder:**
-   ```bash
-   cd solutions/checkpoint-01-simple-ai
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start the Development Server:**
-   ```bash
-   npm run dev
-   ```
+From the repository root, start the development server:
+```bash
+npm run dev:cp1
+```
 
 The server will start at `http://localhost:3000`.
 

@@ -36,27 +36,19 @@ If you haven't already exported your key in this terminal:
 
 ---
 
-### 2. Install & Run
+### 2. Run this Checkpoint
 
-1. **Navigate to this folder:**
-   ```bash
-   cd solutions/checkpoint-04-resilience
-   ```
+From the repository root:
+```bash
+# Run unit tests:
+npm test
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+# Start the development server:
+npm run dev:cp4
 
-3. **Run the Test Suite (Validators + Resilience):**
-   ```bash
-   npm test
-   ```
-
-4. **Start the Development Server:**
-   ```bash
-   npm run dev
-   ```
+# Or test fallback failover:
+npm run dev:cp4:fallback
+```
 
 ---
 
@@ -64,9 +56,9 @@ If you haven't already exported your key in this terminal:
 
 The server defaults to `gemini-3.5-flash-lite`. To test exponential backoff, retry logging, and automatic failover in action:
 
-1. Start the server with `PRIMARY_MODEL=gemini-3.8-flash` (which experiences `503 Service Unavailable` high-demand spikes after a few requests):
+1. Start the server with fallback simulation:
    ```bash
-   PRIMARY_MODEL=gemini-3.8-flash npm run dev
+   npm run dev:cp4:fallback
    ```
 2. Send receipt scan requests from the app or curl: observe the server logs retry attempts with exponential backoff and jitter, then gracefully fail over to `gemini-3.1-flash-lite` without failing the client request.
 

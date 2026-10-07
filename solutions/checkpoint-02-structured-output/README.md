@@ -35,22 +35,12 @@ If you haven't already exported your key in this terminal:
 
 ---
 
-### 2. Install & Run
+### 2. Run this Checkpoint
 
-1. **Navigate to this folder:**
-   ```bash
-   cd solutions/checkpoint-02-structured-output
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start the Development Server:**
-   ```bash
-   npm run dev
-   ```
+From the repository root, start the development server:
+```bash
+npm run dev:cp2
+```
 
 ---
 
