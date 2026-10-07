@@ -98,6 +98,17 @@ console.log('🧪 Starting Receipt Validator Unit Tests...\n');
 
   const a3 = validateAmountsAndLineItems(20.0, [], 25.0);
   assert(a3.tax === null && a3.warnings.some((w) => w.code === 'TAX_ANOMALY'), 'Tax greater than total is discarded');
+
+  const a4 = validateAmountsAndLineItems(
+    18.50,
+    [
+      { name: 'ESPRESSO', price: 6.0, quantity: 2 },
+      { name: 'CROISSANT', price: 3.5, quantity: 1 },
+      { name: 'OMELETTE', price: 9.0, quantity: 1 },
+    ],
+    1.68
+  );
+  assert(a4.isMathConsistent === true && a4.warnings.length === 0, 'European VAT-inclusive flat item sum (6+3.5+9=18.50) is consistent');
 }
 
 // 5. Confidence Calibration Tests

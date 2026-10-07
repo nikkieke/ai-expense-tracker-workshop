@@ -107,6 +107,17 @@ console.log('🧪 Starting Receipt Validator Unit Tests...\n');
     1.0
   );
   assert(a4.totalAmount === 10.0 && a4.warnings.some((w) => w.code === 'AMOUNT_NON_POSITIVE'), 'Missing total calculated from line items');
+
+  const a5 = validateAmountsAndLineItems(
+    18.50,
+    [
+      { name: 'ESPRESSO', price: 6.0, quantity: 2 },
+      { name: 'CROISSANT', price: 3.5, quantity: 1 },
+      { name: 'OMELETTE', price: 9.0, quantity: 1 },
+    ],
+    1.68
+  );
+  assert(a5.isMathConsistent === true && a5.warnings.length === 0, 'European VAT-inclusive flat item sum (6+3.5+9=18.50) is consistent');
 }
 
 // 5. Full Pipeline & Confidence Calibration Tests

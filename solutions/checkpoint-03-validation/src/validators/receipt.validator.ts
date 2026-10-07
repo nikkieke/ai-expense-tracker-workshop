@@ -249,16 +249,25 @@ export function validateAmountsAndLineItems(
         : 1,
   }));
 
-  const calculatedItemsSum = sanitizedItems.reduce((acc, item) => {
+  // Calculate sum assuming unit price with quantity multiplier: sum(price * quantity)
+  const sumWithQty = sanitizedItems.reduce((acc, item) => {
     if (typeof item.price === 'number' && !isNaN(item.price)) {
       return acc + item.price * (item.quantity || 1);
     }
     return acc;
   }, 0);
 
+  // Calculate sum assuming price is already the line total: sum(price)
+  const sumFlat = sanitizedItems.reduce((acc, item) => {
+    if (typeof item.price === 'number' && !isNaN(item.price)) {
+      return acc + item.price;
+    }
+    return acc;
+  }, 0);
+
   if (isNaN(sanitizedTotal) || sanitizedTotal <= 0) {
-    if (calculatedItemsSum > 0) {
-      sanitizedTotal = Number((calculatedItemsSum + (sanitizedTax || 0)).toFixed(2));
+    if (sumWithQty > 0) {
+      sanitizedTotal = Number((sumWithQty + (sanitizedTax || 0)).toFixed(2));
       warnings.push({
         field: 'totalAmount',
         code: 'AMOUNT_NON_POSITIVE',
@@ -292,17 +301,27 @@ export function validateAmountsAndLineItems(
     }
   }
 
+  // Cross-Reconcile Line Items + Tax against Total Amount
+  // Supports tax-exclusive (US/Canada), tax-inclusive (VAT/Europe), unit pricing, and line-total pricing
   let isMathConsistent = true;
-  if (sanitizedItems.length > 0 && calculatedItemsSum > 0 && sanitizedTotal > 0) {
-    const expectedTotal = calculatedItemsSum + (sanitizedTax || 0);
-    const diff = Math.abs(expectedTotal - sanitizedTotal);
+  if (sanitizedItems.length > 0 && (sumWithQty > 0 || sumFlat > 0) && sanitizedTotal > 0) {
+    const taxVal = sanitizedTax || 0;
+    const TOLERANCE = 0.10;
 
-    if (diff > 0.1) {
-      isMathConsistent = false;
+    const isTaxExclusive = Math.abs(sumWithQty + taxVal - sanitizedTotal) <= TOLERANCE;
+    const isTaxInclusive = Math.abs(sumWithQty - sanitizedTotal) <= TOLERANCE;
+    const isFlatTaxExclusive = Math.abs(sumFlat + taxVal - sanitizedTotal) <= TOLERANCE;
+    const isFlatTaxInclusive = Math.abs(sumFlat - sanitizedTotal) <= TOLERANCE;
+
+    isMathConsistent = isTaxExclusive || isTaxInclusive || isFlatTaxExclusive || isFlatTaxInclusive;
+
+    if (!isMathConsistent) {
+      const bestEstimate = sumWithQty + taxVal;
+      const diff = Math.abs(bestEstimate - sanitizedTotal);
       warnings.push({
         field: 'items',
         code: 'MATH_DISCREPANCY',
-        message: `Item sum + tax (${expectedTotal.toFixed(2)}) does not match the total amount (${sanitizedTotal.toFixed(2)}). Discrepancy: ${diff.toFixed(2)}.`,
+        message: `Item sum (${sumWithQty.toFixed(2)}) + tax (${taxVal.toFixed(2)}) does not reconcile with total amount (${sanitizedTotal.toFixed(2)}). Discrepancy: ${diff.toFixed(2)}.`,
       });
     }
   }
