@@ -13,10 +13,10 @@ import {
   type RawExpenseOutput,
 } from '../schemas/expense.schema.js';
 import { validateAndSanitizeReceipt } from '../validators/receipt.validator.js';
-import { withRetry } from '../utils/resilience.js';
+import { withRetry, isRetryableError } from '../utils/resilience.js';
 
-const TIMEOUT_MS = Number(process.env.RECEIPT_TIMEOUT_MS) || 15000;
-const MAX_RETRIES = Number(process.env.RECEIPT_MAX_RETRIES) || 2;
+const TIMEOUT_MS = Number(process.env.RECEIPT_TIMEOUT_MS) || 8000;
+const MAX_RETRIES = Number(process.env.RECEIPT_MAX_RETRIES) || 1;
 const ENABLE_GRACEFUL_FALLBACK = process.env.RECEIPT_ENABLE_FALLBACK !== 'false';
 
 function buildExtractionPrompt(imageUrl: string, preferredCurrency: string) {
@@ -115,12 +115,19 @@ export const extractReceiptFlow = ai.defineFlow(
           maxRetries: MAX_RETRIES,
           timeoutMs: TIMEOUT_MS,
           operationName: `Primary Model (${PRIMARY_MODEL_NAME})`,
+          shouldRetry: (err) => {
+            // Fast Failover: If primary model timed out, fail over immediately to save client SLA
+            if (err.name === 'TimeoutError' || err.message?.includes('timed out')) {
+              return false;
+            }
+            return isRetryableError(err);
+          },
         }
       );
     } catch (err: any) {
       primaryError = err;
       console.warn(
-        `⚠️ Primary model (${PRIMARY_MODEL_NAME}) failed after retries: ${err.message}. Triggering fallback model (${FALLBACK_MODEL_NAME})...`
+        `⚠️ Primary model (${PRIMARY_MODEL_NAME}) failed: ${err.message}. Triggering fallback model (${FALLBACK_MODEL_NAME})...`
       );
     }
 

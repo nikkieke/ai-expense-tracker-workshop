@@ -5,7 +5,8 @@ export interface RetryOptions {
   backoffFactor?: number;
   timeoutMs?: number;
   operationName?: string;
-  isRetryable?: (error: any) => boolean;
+  shouldRetry?: (error: any) => boolean;
+  onRetry?: (error: any, attempt: number, delayMs: number) => void;
 }
 
 /**
@@ -14,7 +15,7 @@ export interface RetryOptions {
 export function calculateBackoffWithJitter(
   attempt: number,
   initialDelayMs: number = 1000,
-  maxDelayMs: number = 10000,
+  maxDelayMs: number = 8000,
   backoffFactor: number = 2
 ): number {
   const calculated = initialDelayMs * Math.pow(backoffFactor, attempt);
@@ -28,7 +29,7 @@ export function calculateBackoffWithJitter(
  */
 export function withTimeout<T>(
   promise: Promise<T>,
-  timeoutMs: number,
+  timeoutMs: number = 15000,
   operationName: string = 'Operation'
 ): Promise<T> {
   let timeoutId: NodeJS.Timeout;
@@ -56,7 +57,9 @@ export function withTimeout<T>(
 export function isRetryableError(error: any): boolean {
   if (!error) return false;
 
-  if (error.name === 'TimeoutError') return true;
+  if (error.name === 'TimeoutError' || error.message?.includes('timed out')) {
+    return true;
+  }
 
   const status = error.status || error.statusCode || error.httpStatusCode || error.code;
   if ([429, 500, 502, 503, 504].includes(status)) {
@@ -78,6 +81,8 @@ export function isRetryableError(error: any): boolean {
     'deadline exceeded',
     'try again',
     'temporary',
+    '503',
+    '429',
   ];
 
   return transientPatterns.some((pattern) => message.includes(pattern));
@@ -87,7 +92,7 @@ export function isRetryableError(error: any): boolean {
  * Executes an async operation with exponential backoff retries, jitter, and optional timeout.
  */
 export async function withRetry<T>(
-  fn: () => Promise<T>,
+  fn: (attempt?: number) => Promise<T>,
   options: RetryOptions = {}
 ): Promise<T> {
   const {
@@ -97,14 +102,14 @@ export async function withRetry<T>(
     backoffFactor = 2,
     timeoutMs,
     operationName = 'Operation',
-    isRetryable = isRetryableError,
+    shouldRetry = isRetryableError,
+    onRetry,
   } = options;
-
   let lastError: any;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      const execPromise = fn();
+      const execPromise = fn(attempt);
       if (timeoutMs && timeoutMs > 0) {
         return await withTimeout(execPromise, timeoutMs, `${operationName} (attempt ${attempt + 1})`);
       }
@@ -116,7 +121,7 @@ export async function withRetry<T>(
         break;
       }
 
-      if (!isRetryable(error)) {
+      if (!shouldRetry(error)) {
         throw error;
       }
 
@@ -127,9 +132,13 @@ export async function withRetry<T>(
         backoffFactor
       );
 
-      console.warn(
-        `⚠️ [${operationName}] Transient failure on attempt ${attempt + 1}/${maxRetries + 1} (${error.message}). Retrying in ${delay}ms...`
-      );
+      if (onRetry) {
+        onRetry(error, attempt, delay);
+      } else {
+        console.warn(
+          `⚠️ [${operationName}] Transient failure on attempt ${attempt + 1}/${maxRetries + 1} (${error.message}). Retrying in ${delay}ms...`
+        );
+      }
 
       await new Promise((resolve) => setTimeout(resolve, delay));
     }

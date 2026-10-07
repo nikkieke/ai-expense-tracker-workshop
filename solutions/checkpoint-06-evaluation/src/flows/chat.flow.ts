@@ -12,7 +12,7 @@ import {
   type ChatOutput,
 } from '../schemas/chat.schema.js';
 import { getExpensesTool } from '../tools/get-expenses.js';
-import { withRetry } from '../utils/resilience.js';
+import { withRetry, isRetryableError } from '../utils/resilience.js';
 
 /**
  * Builds the system instruction prompt with current calendar date anchor.
@@ -80,9 +80,16 @@ export const askExpenseAssistantFlow = ai.defineFlow(
           });
         },
         {
-          maxRetries: 2,
-          timeoutMs: 20000,
+          maxRetries: 1,
+          timeoutMs: 10000,
           operationName: `Expense Assistant Primary (${PRIMARY_MODEL_NAME})`,
+          shouldRetry: (err) => {
+            // Fast failover on timeout: immediately trigger fallback model
+            if (err.name === 'TimeoutError' || err.message?.includes('timed out')) {
+              return false;
+            }
+            return isRetryableError(err);
+          },
         }
       );
     } catch (err: any) {
@@ -104,7 +111,7 @@ export const askExpenseAssistantFlow = ai.defineFlow(
         },
         {
           maxRetries: 1,
-          timeoutMs: 20000,
+          timeoutMs: 10000,
           operationName: `Expense Assistant Fallback (${FALLBACK_MODEL_NAME})`,
         }
       );
