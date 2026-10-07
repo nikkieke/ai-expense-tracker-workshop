@@ -61,4 +61,4 @@ If you haven't already exported your key in this terminal:
 ---
 
 ## 💡 Next Step
-Proceed to **`solutions/checkpoint-04-resilience`** to introduce exponential backoff retries, timeouts, and automatic failover to `gemini-3.5-flash-lite`.
+Proceed to **`solutions/checkpoint-04-resilience`** to introduce exponential backoff retries, timeouts, and automatic failover to `gemini-3.1-flash-lite`.

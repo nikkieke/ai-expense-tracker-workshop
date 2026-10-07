@@ -103,7 +103,7 @@ export const extractReceiptFlow = ai.defineFlow(
     let usedFallbackModel = false;
     let primaryError: any = null;
 
-    // 1. Attempt Primary Model (gemini-3.8-flash) with Retries & Timeout (temperature 0 for deterministic extraction)
+    // 1. Attempt Primary Model with Retries & Timeout (temperature 0 for deterministic extraction)
     try {
       rawOutput = await withRetry(
         async () => {
@@ -137,7 +137,7 @@ export const extractReceiptFlow = ai.defineFlow(
       );
     }
 
-    // 2. Attempt Fallback Model (gemini-3.5-flash-lite) if Primary Failed
+    // 2. Attempt Fallback Model if Primary Failed
     if (!rawOutput) {
       try {
         rawOutput = await withRetry(

@@ -15,7 +15,7 @@ Implement automated CI/CD-ready quality evaluations to test accuracy, measure la
 3. **Side-by-Side Prompt Benchmarking (`npm run eval:compare-prompts`)**:
    - Compares production high-quality prompts (with temperature 0.0 & explicit guardrails) against native low-quality prompts.
 4. **Side-by-Side Model Benchmarking (`npm run eval:compare-models`)**:
-   - Compares `gemini-3.8-flash` against `gemini-3.5-flash-lite` on accuracy and average latency (ms).
+   - Compares `gemini-3.5-flash-lite` against `gemini-3.1-flash-lite` on accuracy and average latency (ms).
 
 ---
 
