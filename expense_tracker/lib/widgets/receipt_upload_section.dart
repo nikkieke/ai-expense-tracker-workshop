@@ -255,7 +255,7 @@ class ReceiptUploadSection extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '${receipt.category} • ${receipt.date} (${receipt.confidence} confidence)',
+                        '${receipt.category} • ${receipt.date.isNotEmpty ? receipt.date : 'Date unknown'} (${receipt.confidence} confidence)',
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           color: Colors.grey.shade500,

@@ -197,7 +197,7 @@ class ReceiptDetailDialog extends StatelessWidget {
                         child: _buildInfoCard(
                           icon: Icons.calendar_month_rounded,
                           label: 'Transaction Date',
-                          value: receipt.date,
+                          value: receipt.date.isNotEmpty ? receipt.date : 'Not Detected',
                         ),
                       ),
                       const SizedBox(width: 12),

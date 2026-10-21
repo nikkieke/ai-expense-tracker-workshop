@@ -73,7 +73,7 @@ export const RawExpenseOutputSchema = z.object({
     .describe('Currency ISO code or symbol (e.g. USD, EUR, $, etc.)'),
   date: z
     .string()
-    .describe('Transaction date (format: YYYY-MM-DD or best approximate date)'),
+    .describe('Transaction date (format: YYYY-MM-DD or empty string "" if missing/illegible)'),
   category: ExpenseCategoryEnum.describe(
     'Best matching expense category from the predefined list'
   ),
@@ -104,8 +104,9 @@ export type RawExpenseOutput = z.infer<typeof RawExpenseOutputSchema>;
 export const ExpenseOutputSchema = RawExpenseOutputSchema.extend({
   isMathConsistent: z
     .boolean()
-    .default(true)
-    .describe('Whether line items and tax mathematically reconcile with the grand total'),
+    .nullable()
+    .optional()
+    .describe('Whether line items and tax mathematically reconcile with the grand total, or null if not evaluated'),
   warnings: z
     .array(ValidationWarningSchema)
     .default([])

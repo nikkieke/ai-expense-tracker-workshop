@@ -12,7 +12,7 @@ import type { RawExpenseOutput } from '../schemas/expense.schema.js';
 let passed = 0;
 let failed = 0;
 
-function assert(condition: boolean, testName: string, detail?: string) {
+function assert(condition: any, testName: string, detail?: string) {
   if (condition) {
     console.log(`✅ PASS: ${testName}`);
     passed++;
@@ -67,7 +67,10 @@ console.log('🧪 Starting Receipt Validator Unit Tests...\n');
   assert(d2.date === todayIso && d2.warning?.code === 'FUTURE_DATE_ADJUSTED', 'Future date adjusted to today');
 
   const d3 = validateAndNormalizeDate('invalid-date-string');
-  assert(d3.date === todayIso && d3.warning?.code === 'INVALID_DATE_FORMAT', 'Invalid date format defaulted to today');
+  assert(d3.date === '' && d3.warning?.code === 'INVALID_DATE_FORMAT', 'Invalid date format returns empty string');
+
+  const dEmpty = validateAndNormalizeDate('');
+  assert(dEmpty.date === '' && dEmpty.warning?.code === 'INVALID_DATE_FORMAT', 'Empty date returns empty string');
 
   const d4 = validateAndNormalizeDate('1990-01-01');
   assert(d4.date === '1990-01-01' && d4.warning?.code === 'OLD_DATE_DETECTED', 'Very old date flagged with warning');
@@ -97,7 +100,7 @@ console.log('🧪 Starting Receipt Validator Unit Tests...\n');
   assert(a2.isMathConsistent === false && a2.warnings.some((w) => w.code === 'MATH_DISCREPANCY'), 'Discrepancy (20 vs 50) flags MATH_DISCREPANCY');
 
   const a3 = validateAmountsAndLineItems(20.0, [], 25.0);
-  assert(a3.tax === null && a3.warnings.some((w) => w.code === 'TAX_ANOMALY'), 'Tax greater than total is discarded');
+  assert(a3.tax === null && a3.isMathConsistent === null && a3.warnings.some((w) => w.code === 'TAX_ANOMALY'), 'Tax greater than total is discarded and math is null with empty items');
 
   const a4 = validateAmountsAndLineItems(
     18.50,
@@ -109,6 +112,9 @@ console.log('🧪 Starting Receipt Validator Unit Tests...\n');
     1.68
   );
   assert(a4.isMathConsistent === true && a4.warnings.length === 0, 'European VAT-inclusive flat item sum (6+3.5+9=18.50) is consistent');
+
+  const aEmpty = validateAmountsAndLineItems(0, []);
+  assert(aEmpty.isMathConsistent === null, 'Math reconciliation is null when no items or zero total');
 }
 
 // 5. Confidence Calibration Tests

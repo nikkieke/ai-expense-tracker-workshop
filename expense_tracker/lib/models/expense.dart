@@ -85,7 +85,7 @@ class ExpenseOutput {
       merchantName: json['merchantName'] as String? ?? 'Unknown Merchant',
       totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0.0,
       currency: json['currency'] as String? ?? 'USD',
-      date: json['date'] as String? ?? DateTime.now().toIso8601String().split('T')[0],
+      date: json['date'] as String? ?? '',
       category: json['category'] as String? ?? 'Other',
       items: rawItems.map((e) => ReceiptLineItem.fromJson(e as Map<String, dynamic>)).toList(),
       tax: json['tax'] != null ? (json['tax'] as num).toDouble() : null,

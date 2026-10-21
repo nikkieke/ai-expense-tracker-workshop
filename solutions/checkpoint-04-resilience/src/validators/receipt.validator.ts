@@ -162,11 +162,11 @@ export function validateAndNormalizeDate(rawDate: string | undefined | null): {
 
   if (!rawDate || typeof rawDate !== 'string' || !rawDate.trim()) {
     return {
-      date: todayIso,
+      date: '',
       warning: {
         field: 'date',
         code: 'INVALID_DATE_FORMAT',
-        message: `Receipt date was missing and was defaulted to today (${todayIso}).`,
+        message: 'Receipt date was missing or could not be extracted.',
       },
     };
   }
@@ -184,11 +184,11 @@ export function validateAndNormalizeDate(rawDate: string | undefined | null): {
 
   if (isNaN(parsedDate.getTime())) {
     return {
-      date: todayIso,
+      date: '',
       warning: {
         field: 'date',
         code: 'INVALID_DATE_FORMAT',
-        message: `Date "${trimmed}" could not be parsed and was defaulted to today (${todayIso}).`,
+        message: `Date "${trimmed}" could not be parsed and was left empty.`,
       },
     };
   }
@@ -233,7 +233,7 @@ export function validateAmountsAndLineItems(
   totalAmount: number;
   items: ReceiptLineItem[];
   tax: number | null;
-  isMathConsistent: boolean;
+  isMathConsistent: boolean | null;
   warnings: ValidationWarning[];
 } {
   const warnings: ValidationWarning[] = [];
@@ -302,8 +302,9 @@ export function validateAmountsAndLineItems(
   }
 
   // Cross-Reconcile Line Items + Tax against Total Amount
-  // Supports tax-exclusive (US/Canada), tax-inclusive (VAT/Europe), unit pricing, and line-total pricing
-  let isMathConsistent = true;
+  // Supports tax-exclusive (US/Canada), tax-inclusive (VAT/Europe), unit pricing, and line-total pricing.
+  // When no items or non-positive total, reconciliation cannot be evaluated (null).
+  let isMathConsistent: boolean | null = null;
   if (sanitizedItems.length > 0 && (sumWithQty > 0 || sumFlat > 0) && sanitizedTotal > 0) {
     const taxVal = sanitizedTax || 0;
     const TOLERANCE = 0.10;

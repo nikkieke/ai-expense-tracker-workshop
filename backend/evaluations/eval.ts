@@ -309,7 +309,7 @@ async function runSuite(promptType: 'current' | 'low', modelName = PRIMARY_MODEL
           tax: null,
           confidence: 'low',
           summary: '',
-          isMathConsistent: false,
+          isMathConsistent: null,
           warnings: [],
         },
         latencyMs: 0,

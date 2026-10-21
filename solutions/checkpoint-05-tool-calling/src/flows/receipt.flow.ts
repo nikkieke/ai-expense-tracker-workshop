@@ -49,10 +49,11 @@ Analyze the provided receipt image carefully and extract all relevant details:
 
 CRITICAL GUARDRAILS:
 - If the image is blurry, unreadable, dark, occluded, or does not clearly display text/numbers:
-  * Do NOT guess, fabricate, or hallucinate store names, prices, or line items.
+  * Do NOT guess, fabricate, or hallucinate store names, prices, dates, or line items.
   * Set "confidence" to "low".
   * Set "merchantName" to "Unreadable Receipt".
   * Set "totalAmount" to 0 (or only extract strictly legible numbers).
+  * Set "date" to "" (empty string; do NOT invent or estimate dates if illegible).
   * Leave "items" as an empty list [].
   * In "summary", explain: "Receipt image is too blurry or unclear to read reliably."`,
     },
@@ -66,19 +67,17 @@ function createFallbackSkeleton(
   preferredCurrency: string,
   errorMessage: string
 ): ExpenseOutput {
-  const todayIso = new Date().toISOString().split('T')[0];
-
   return {
     merchantName: 'Unprocessed Receipt',
     totalAmount: 0,
     currency: preferredCurrency.toUpperCase(),
-    date: todayIso,
+    date: '',
     category: 'Other',
     items: [],
     tax: null,
     confidence: 'low',
     summary: 'Receipt extraction failed. Please enter details manually.',
-    isMathConsistent: true,
+    isMathConsistent: null,
     warnings: [
       {
         field: 'system',
